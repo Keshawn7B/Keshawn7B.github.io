@@ -3,7 +3,7 @@ Hello Keshawn7B
 
 ![image](https://user-images.githubusercontent.com/89408593/131426806-e6f97f51-9a1e-4f2e-8bcc-bbd4c554af18.png)
 
-Problem Statement: Student Scheduler
+### **Problem Statement: Student Scheduler**
 
 Our users are frustrated because they often miss out on important material
 due to their lack of time management. Our solution should provide users
