@@ -2,6 +2,18 @@ body {
     background:gray;
     font-family: monospace;
 }
+
+.assignment { 
+    display:flex;
+    padding: 10px;
+    margin: 10px;
+    background: lightgrey;
+}
+.assignment img { 
+    width:200p;
+    padding: 10px;
+}
+
 h1 {
     color: darkred;
     text-align: center;
