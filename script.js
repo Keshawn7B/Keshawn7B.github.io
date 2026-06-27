@@ -12,8 +12,8 @@ const projects = [
     type: 'AI + Web Tool',
     tags: ['software', 'ai'],
     status: 'Shipped public demo',
-    summary: 'A static tool that turns a rough product, game, service, or project idea into a copy-paste prompt kit for ChatGPT, Gemini, Claude, Grok, Copilot, or local models.',
-    why: 'Shows product thinking, prompt-system design, privacy-conscious static deployment, and polished browser UX without exposing API keys.',
+    summary: 'I built this because a lot of good ideas die before they get explained well. LaunchPack helps someone turn a rough product, game, service, or project idea into a stronger prompt kit for modern AI tools.',
+    why: 'It reflects how I like to build: practical, privacy-conscious, easy to try, and focused on helping someone move from stuck to started.',
     links: [
       ['Live demo', 'https://keshawn7b.github.io/launchpack/'],
       ['Code', 'https://github.com/Keshawn7B/launchpack']
@@ -24,8 +24,8 @@ const projects = [
     type: 'AI Workflow / Systems',
     tags: ['software', 'ai'],
     status: 'Private system, public-safe summary',
-    summary: 'A cross-platform assistant workflow for planning, coding support, automations, reminders, project work, and tool orchestration across local development and messaging channels.',
-    why: 'Demonstrates systems thinking: tool access, memory boundaries, privacy guardrails, scheduled automation, and real execution instead of chatbot-only output.',
+    summary: 'A real assistant workflow I use for planning, coding support, reminders, project work, and tool orchestration across local development and messaging channels.',
+    why: 'This is where my interest in AI becomes concrete: boundaries, privacy, execution, automation, and making tools actually fit into daily life.',
     links: [['GitHub profile', 'https://github.com/Keshawn7B']]
   },
   {
@@ -34,7 +34,7 @@ const projects = [
     tags: ['embedded'],
     status: 'USC research profile',
     summary: 'Undergraduate research work connected to autonomous systems, Arduino systems, and circuit design through the University of South Carolina Ultrasonics group.',
-    why: 'Adds hardware credibility and proves the portfolio is not limited to web pages — it connects code, electronics, and physical systems.',
+    why: 'I like that this work touches the physical world. It connects code to circuits, signals, constraints, and the kind of engineering you can measure.',
     links: [['USC research profile', 'https://research.cec.sc.edu/banerjee/people/mr-keshawn-blakely']]
   },
   {
@@ -42,8 +42,8 @@ const projects = [
     type: 'Creative Web Experience',
     tags: ['creative', 'software'],
     status: 'Shipped public demo',
-    summary: 'An interactive mental-weather constellation site: part creative coding experiment, part mood interface, part polished web artifact.',
-    why: 'Shows taste, interaction design, front-end polish, and willingness to build things that are memorable instead of generic.',
+    summary: 'A small interactive “mental weather” constellation. It is part creative coding experiment, part mood interface, and part excuse to make a web page feel less ordinary.',
+    why: 'This is the kind of project that shows taste. Not everything useful has to look corporate; sometimes the memorable detail is the point.',
     links: [
       ['Live demo', 'https://keshawn7b.github.io/signal-garden/'],
       ['Code', 'https://github.com/Keshawn7B/signal-garden']
@@ -54,8 +54,8 @@ const projects = [
     type: 'Interactive Web Experiment',
     tags: ['software', 'creative'],
     status: 'Shipped public demo',
-    summary: 'A browser-based interactive experiment around health, optimization, and futuristic lab-style UI concepts.',
-    why: 'Demonstrates rapid prototyping, visual systems, and the ability to package an idea into something people can actually click through.',
+    summary: 'A browser-based experiment around health, optimization, and futuristic lab-style UI concepts — mostly built to explore how a strong interface can make an idea feel alive.',
+    why: 'It shows rapid prototyping and visual direction: taking a loose concept and packaging it into something people can click through.',
     links: [
       ['Live demo', 'https://keshawn7b.github.io/bio-hack-lab/'],
       ['Code', 'https://github.com/Keshawn7B/bio-hack-lab']
@@ -66,8 +66,8 @@ const projects = [
     type: 'Coursework / Product Design',
     tags: ['software'],
     status: 'Archived coursework',
-    summary: 'A student scheduling concept developed through problem statements, personas, storyboards, sketches, paper prototype, and a hi-fi prototype.',
-    why: 'Useful as early evidence of product thinking: user pain, ideation, prototyping, and interface design before implementation polish.',
+    summary: 'An older student scheduling concept built through problem statements, personas, storyboards, sketches, a paper prototype, and a hi-fi prototype.',
+    why: 'I keep this here because it shows the early version of a habit I still care about: understanding people before jumping into implementation.',
     links: [['Archive', 'Files/Student Scheduler Prototype-html (1)/preview.html']]
   },
   {
@@ -76,7 +76,7 @@ const projects = [
     tags: ['creative', 'software'],
     status: 'In progress',
     summary: 'A Roblox action-game direction focused on fast dashes, parries, training rooms, boss encounters, and tight combat feel under zero-budget constraints.',
-    why: 'Shows ambition, systems design, and a bias toward playable polish — useful for demonstrating iteration even before a finished release.',
+    why: 'Games are unforgiving in a useful way: if the timing feels bad, players know immediately. That makes this a fun space to practice systems, feel, and iteration.',
     links: [['GitHub profile', 'https://github.com/Keshawn7B']]
   }
 ];
