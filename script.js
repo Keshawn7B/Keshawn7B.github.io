@@ -10,9 +10,9 @@ const projects = [
   {
     title: 'LaunchPack — AI Promoter Prompt Builder',
     type: 'AI + Web Tool',
-    tags: ['software', 'ai'],
+    tags: ['software', 'ai', 'react'],
     status: 'Shipped public demo',
-    summary: 'I built this because a lot of good ideas die before they get explained well. LaunchPack helps someone turn a rough product, game, service, or project idea into a stronger prompt kit for modern AI tools.',
+    summary: 'I built this because a lot of good ideas die before they get explained well. LaunchPack helps someone turn a rough product, game, service, or project idea into a stronger prompt kit for modern AI tools — with the kind of UI flow that could grow naturally into a React app.',
     why: 'It reflects how I like to build: practical, privacy-conscious, easy to try, and focused on helping someone move from stuck to started.',
     links: [
       ['Live demo', 'https://keshawn7b.github.io/launchpack/'],
@@ -22,9 +22,9 @@ const projects = [
   {
     title: 'Personal AI Automation System',
     type: 'AI Workflow / Systems',
-    tags: ['software', 'ai'],
+    tags: ['software', 'ai', 'react'],
     status: 'Private system, public-safe summary',
-    summary: 'A real assistant workflow I use for planning, coding support, reminders, project work, and tool orchestration across local development and messaging channels.',
+    summary: 'A real assistant workflow I use for planning, coding support, reminders, project work, and tool orchestration across local development and messaging channels. The interesting part is not just AI — it is the product surface, boundaries, state, and human workflow around it.',
     why: 'This is where my interest in AI becomes concrete: boundaries, privacy, execution, automation, and making tools actually fit into daily life.',
     links: [['GitHub profile', 'https://github.com/Keshawn7B']]
   },
@@ -40,7 +40,7 @@ const projects = [
   {
     title: 'Signal Garden',
     type: 'Creative Web Experience',
-    tags: ['creative', 'software'],
+    tags: ['creative', 'software', 'react'],
     status: 'Shipped public demo',
     summary: 'A small interactive “mental weather” constellation. It is part creative coding experiment, part mood interface, and part excuse to make a web page feel less ordinary.',
     why: 'This is the kind of project that shows taste. Not everything useful has to look corporate; sometimes the memorable detail is the point.',
@@ -52,7 +52,7 @@ const projects = [
   {
     title: 'Bio Hack Lab',
     type: 'Interactive Web Experiment',
-    tags: ['software', 'creative'],
+    tags: ['software', 'creative', 'react'],
     status: 'Shipped public demo',
     summary: 'A browser-based experiment around health, optimization, and futuristic lab-style UI concepts — mostly built to explore how a strong interface can make an idea feel alive.',
     why: 'It shows rapid prototyping and visual direction: taking a loose concept and packaging it into something people can click through.',
@@ -64,7 +64,7 @@ const projects = [
   {
     title: 'Student Scheduler UX Prototype',
     type: 'Coursework / Product Design',
-    tags: ['software'],
+    tags: ['software', 'react'],
     status: 'Archived coursework',
     summary: 'An older student scheduling concept built through problem statements, personas, storyboards, sketches, a paper prototype, and a hi-fi prototype.',
     why: 'I keep this here because it shows the early version of a habit I still care about: understanding people before jumping into implementation.',
@@ -73,7 +73,7 @@ const projects = [
   {
     title: 'Zero-Budget Roblox Action Game',
     type: 'Game / Systems Design',
-    tags: ['creative', 'software'],
+    tags: ['creative', 'software', 'react'],
     status: 'In progress',
     summary: 'A Roblox action-game direction focused on fast dashes, parries, training rooms, boss encounters, and tight combat feel under zero-budget constraints.',
     why: 'Games are unforgiving in a useful way: if the timing feels bad, players know immediately. That makes this a fun space to practice systems, feel, and iteration.',
@@ -84,6 +84,7 @@ const projects = [
 const grid = document.querySelector('#projectGrid');
 const chips = [...document.querySelectorAll('.chip')];
 const profileUrl = 'https://www.linkedin.com/in/keshawn-blakely';
+const tagLabels = { react: 'react-ready' };
 
 function renderProjects(filter = 'all') {
   const visible = filter === 'all' ? projects : projects.filter(project => project.tags.includes(filter));
@@ -94,7 +95,7 @@ function renderProjects(filter = 'all') {
       <h3>${project.title}</h3>
       <p>${project.summary}</p>
       <div class="why"><strong>Why it matters:</strong> ${project.why}</div>
-      <div class="tag-row">${project.tags.map(tag => `<span>${tag}</span>`).join('')}</div>
+      <div class="tag-row">${project.tags.map(tag => `<span>${tagLabels[tag] || tag}</span>`).join('')}</div>
       <div class="project-links">${project.links.map(([label, href]) => `<a href="${href}" target="_blank" rel="noopener">${label}</a>`).join('')}</div>
     </article>
   `).join('');
@@ -102,8 +103,12 @@ function renderProjects(filter = 'all') {
 }
 
 chips.forEach(chip => chip.addEventListener('click', () => {
-  chips.forEach(c => c.classList.remove('active'));
+  chips.forEach(c => {
+    c.classList.remove('active');
+    c.setAttribute('aria-pressed', 'false');
+  });
   chip.classList.add('active');
+  chip.setAttribute('aria-pressed', 'true');
   renderProjects(chip.dataset.filter);
 }));
 
@@ -143,3 +148,18 @@ function observeReveals() {
 
 renderProjects();
 observeReveals();
+
+
+const componentPills = [...document.querySelectorAll('.component-pill')];
+const componentDetail = document.querySelector('#componentDetail');
+componentPills.forEach(pill => pill.addEventListener('click', () => {
+  componentPills.forEach(item => {
+    item.classList.remove('active');
+    item.setAttribute('aria-pressed', 'false');
+  });
+  pill.classList.add('active');
+  pill.setAttribute('aria-pressed', 'true');
+  if (componentDetail) {
+    componentDetail.textContent = pill.dataset.detail;
+  }
+}));

@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#07111f" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Keshawn Blakely — Computer Engineering Portfolio" />
-  <meta property="og:description" content="Software, embedded systems, AI tools, and creative engineering projects by Keshawn Blakely — built with curiosity, taste, and momentum." />
+  <meta property="og:description" content="Software, embedded systems, React-minded UI craft, AI tools, and creative engineering projects by Keshawn Blakely — built with curiosity, taste, and momentum." />
   <meta property="og:url" content="https://keshawn7b.github.io/" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=portfolio-1" />
+  <link rel="stylesheet" href="styles.css?v=portfolio-2" />
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
@@ -25,6 +25,7 @@
     <nav aria-label="Primary navigation">
       <a href="#work">Work</a>
       <a href="#projects">Projects</a>
+      <a href="#craft">Craft</a>
       <a href="#proof">Proof</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -33,10 +34,10 @@
   <main id="top">
     <section class="hero shell" aria-labelledby="hero-title">
       <div class="hero-copy reveal">
-        <p class="kicker">Computer Engineering • Software • Embedded Systems • Creative Tools</p>
+        <p class="kicker">Computer Engineering • React-minded UI • Embedded Systems • Creative Tools</p>
         <p class="eyebrow-note">Hey, I’m Keshawn.</p>
         <h1 id="hero-title">I like building things that start as a rough idea and slowly become real.</h1>
-        <p class="lede">I’m a Computer Engineering student at the University of South Carolina, an Electrical Engineering minor, and a builder who gets excited by the space where code, circuits, AI tools, and design all overlap. This portfolio is a snapshot of that journey: some polished work, some experiments, and a lot of momentum.</p>
+        <p class="lede">I’m a Computer Engineering student at the University of South Carolina, an Electrical Engineering minor, and a builder who gets excited by the space where code, circuits, React-style interface thinking, AI tools, and design all overlap. This portfolio is a snapshot of that journey: not a rushed AI template, but a living proof board of what I notice, what I build, and how I make things feel better.</p>
         <div class="hero-actions">
           <a class="btn primary" href="#projects">View featured work</a>
           <a class="btn" href="https://www.linkedin.com/in/keshawn-blakely" target="_blank" rel="noopener">LinkedIn</a>
@@ -45,15 +46,15 @@
         <div class="signal-strip" aria-label="Portfolio highlights">
           <span><b>Motorola Solutions</b> software engineering experience</span>
           <span><b>USC research</b> microcontrollers + circuits</span>
-          <span><b>Maker mindset</b> web tools, games, AI workflows, experiments</span>
+          <span><b>UI taste</b> reusable components, motion, interaction details</span>
         </div>
       </div>
       <aside class="console-card reveal" aria-label="Engineering snapshot">
         <div class="console-top"><i></i><i></i><i></i><span>profile.signal</span></div>
         <pre><code>const keshawn = {
-  focus: ["software", "embedded", "AI tools"],
+  focus: ["React UI", "software", "embedded", "AI tools"],
   edge: "curious enough to start, stubborn enough to finish",
-  mode: "make it work, make it clearer, make it feel better",
+  mode: "prototype fast, polish intentionally, explain the tradeoffs",
   lookingFor: "internships, early-career roles, collaborations"
 }</code></pre>
         <div class="pulse-grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -109,13 +110,55 @@
         <p>Some of these are shipped demos, some are experiments, and some are still growing. The through-line is simple: I like making ideas tangible enough that someone else can try them, question them, or build on them.</p>
       </div>
       <div class="filter-row reveal" aria-label="Project filters">
-        <button class="chip active" data-filter="all">All</button>
-        <button class="chip" data-filter="software">Software</button>
-        <button class="chip" data-filter="ai">AI</button>
-        <button class="chip" data-filter="embedded">Embedded</button>
-        <button class="chip" data-filter="creative">Creative</button>
+        <button class="chip active" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" data-filter="software" aria-pressed="false">Software</button>
+        <button class="chip" data-filter="react" aria-pressed="false">React/UI</button>
+        <button class="chip" data-filter="ai" aria-pressed="false">AI</button>
+        <button class="chip" data-filter="embedded" aria-pressed="false">Embedded</button>
+        <button class="chip" data-filter="creative" aria-pressed="false">Creative</button>
       </div>
       <div class="project-grid" id="projectGrid"></div>
+    </section>
+
+
+
+    <section class="section shell craft" id="craft" aria-labelledby="craft-title">
+      <div class="section-head wide reveal">
+        <p class="kicker">What makes this different</p>
+        <h2 id="craft-title">I’m not trying to pass off an AI-generated shell as a portfolio.</h2>
+        <p>The point is to show judgment: interface taste, project thinking, clear tradeoffs, and evidence that I can keep improving something after the first version exists.</p>
+      </div>
+      <div class="craft-grid">
+        <article class="craft-card reveal">
+          <span class="craft-number">01</span>
+          <h3>UI decisions with reasons</h3>
+          <p>Instead of generic cards and buzzwords, the site uses filters, status labels, project motivation, warm copy, keyboard-friendly controls, responsive layout, and subtle motion to make the work easier to understand.</p>
+        </article>
+        <article class="craft-card reveal">
+          <span class="craft-number">02</span>
+          <h3>React-ready component thinking</h3>
+          <p>The current site is intentionally lightweight for GitHub Pages, but it is organized around reusable component patterns: hero, signal strip, project card, filter chips, proof panels, craft notes, and CTA blocks. That structure maps cleanly to React components when the site grows.</p>
+        </article>
+        <article class="craft-card reveal">
+          <span class="craft-number">03</span>
+          <h3>AI used as leverage, not camouflage</h3>
+          <p>I care about the difference between using AI to move faster and using AI to hide weak thinking. The portfolio names what is real, what is in progress, and what still needs deeper case studies.</p>
+        </article>
+      </div>
+      <div class="ui-lab reveal" aria-label="Interactive UI craft demo">
+        <div class="ui-lab-copy">
+          <p class="kicker">Mini UI system</p>
+          <h3>Component polish checklist</h3>
+          <p>Good UI is not decoration. It is rhythm, feedback, hierarchy, accessibility, and knowing when to keep the interface quiet.</p>
+        </div>
+        <div class="component-stack" id="componentStack">
+          <button class="component-pill active" aria-pressed="true" data-detail="Motion should help people understand state changes, not distract them.">Motion</button>
+          <button class="component-pill" aria-pressed="false" data-detail="React components should have clear props, predictable state, and names someone else can understand.">React structure</button>
+          <button class="component-pill" aria-pressed="false" data-detail="A strong portfolio says what shipped, what is private, what is experimental, and what needs more proof.">Honest scope</button>
+          <button class="component-pill" aria-pressed="false" data-detail="Visual design matters because employers and users both notice whether the builder has taste.">Taste</button>
+        </div>
+        <p class="component-detail" id="componentDetail">Motion should help people understand state changes, not distract them.</p>
+      </div>
     </section>
 
     <section class="section shell proof" id="proof" aria-labelledby="proof-title">
@@ -127,7 +170,7 @@
         <div class="proof-panel reveal">
           <h3>Technical range</h3>
           <ul>
-            <li>JavaScript, HTML, CSS, Python exposure, GitHub Pages deployment</li>
+            <li>JavaScript, HTML, CSS, React component thinking, Python exposure, GitHub Pages deployment</li>
             <li>Microcontroller and circuit-design foundation through USC research</li>
             <li>AI workflow design without hiding behind vague “AI magic” claims</li>
           </ul>
@@ -136,7 +179,7 @@
           <h3>Product instincts</h3>
           <ul>
             <li>Can explain who a project is for and why it matters</li>
-            <li>Builds demos that are public, understandable, and visually polished</li>
+            <li>Builds demos with UI hierarchy, interaction feedback, responsive states, and readable project framing</li>
             <li>Iterates from rough ideas into usable tools instead of stopping at concepts</li>
           </ul>
         </div>
@@ -145,7 +188,7 @@
           <ul>
             <li>Public portfolio rebuilt from old coursework into modern project storytelling</li>
             <li>Comfortable connecting hardware, software, creativity, and automation</li>
-            <li>Clear path toward deeper case studies, tests, and production-grade projects</li>
+            <li>Clear path toward React-based case studies, tests, screenshots, and production-grade project writeups</li>
           </ul>
         </div>
       </div>
@@ -158,6 +201,7 @@
         <p>I don’t want this to be a frozen résumé page. I want it to become a living record of what I’m learning, what I’m building, what broke, what improved, and what I’m proud of enough to share.</p>
         <div class="next-list">
           <span>Next: project screenshots</span>
+          <span>Next: React/Next.js case-study version</span>
           <span>Next: downloadable resume</span>
           <span>Next: deeper Motorola-safe case studies</span>
           <span>Next: embedded systems demos</span>
@@ -186,6 +230,6 @@
     <a href="#top">Back to top</a>
   </footer>
 
-  <script src="script.js?v=portfolio-1"></script>
+  <script src="script.js?v=portfolio-2"></script>
 </body>
 </html>
