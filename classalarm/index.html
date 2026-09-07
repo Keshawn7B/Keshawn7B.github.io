@@ -26,39 +26,210 @@
 <body>
 <main>
   <div class="top"><div class="brand">⏰ ClassAlarm</div><div class="muted">first lecture only</div></div>
+
   <section class="hero">
     <div class="eyebrow">WAKE-UP SCHEDULER</div>
     <h1>Only wake up for your first class.</h1>
     <p>Upload the latest school schedule. The app finds the earliest lecture on each date and ignores every later class that day.</p>
   </section>
+
   <div class="grid">
     <div class="card upload">
-      <strong>Upload schedule PDF</strong><span class="muted">Use the newest schedule whenever the school changes the week.</span><input id="pdf" type="file" accept="application/pdf" />
+      <strong>Upload schedule PDF</strong>
+      <span class="muted">Use the newest schedule whenever the school changes the week.</span>
+      <input id="pdf" type="file" accept="application/pdf" />
     </div>
     <div class="card upload">
-      <strong>Test with mock data</strong><span class="muted">The mock schedule intentionally has several classes per day.</span><button id="mock" class="secondary">Load mock schedule</button>
+      <strong>Test with mock data</strong>
+      <span class="muted">The mock schedule intentionally has several classes per day.</span>
+      <div class="row">
+        <button id="mock" class="secondary">Load generic mock</button>
+        <button id="realmock" class="secondary">Load uploaded schedule test</button>
+      </div>
     </div>
   </div>
+
   <section class="card settings">
-    <div><label class="small" for="lead">Wake-up time</label><select id="lead"><option value="15">15 min before first class</option><option value="30">30 min before first class</option><option value="45">45 min before first class</option><option value="60" selected>1 hour before first class</option><option value="90">1.5 hours before first class</option><option value="120">2 hours before first class</option></select></div>
-    <div class="row"><button id="notify" class="secondary">Enable browser alert</button><button id="ics" class="primary" disabled>Create first-class alarms</button></div>
+    <div>
+      <label class="small" for="lead">Wake-up time</label>
+      <select id="lead">
+        <option value="15">15 min before first class</option>
+        <option value="30">30 min before first class</option>
+        <option value="45">45 min before first class</option>
+        <option value="60" selected>1 hour before first class</option>
+        <option value="90">1.5 hours before first class</option>
+        <option value="120">2 hours before first class</option>
+      </select>
+    </div>
+    <div class="row">
+      <button id="notify" class="secondary">Enable browser alert</button>
+      <button id="ics" class="primary" disabled>Create first-class alarms</button>
+    </div>
   </section>
-  <div id="status">Load the mock schedule or upload a PDF.</div><section id="schedule"></section>
-  <div class="card note"><strong>Wake-up alarm limitation:</strong> a website cannot reliably ring like the native Clock app after the browser is closed, especially on iPhone. The calendar export creates alarms for only the first lecture of each day. A production native app can use Android/iOS alarm APIs for a true wake-up alarm.</div>
+
+  <div id="status">Load the mock schedule or upload a PDF.</div>
+  <section id="schedule"></section>
+
+  <div class="card note">
+    <strong>Wake-up alarm limitation:</strong> a website cannot reliably ring like the native Clock app after the browser is closed, especially on iPhone. The calendar export creates alarms for only the first lecture of each day. A production native app can use Android/iOS alarm APIs for a true wake-up alarm.
+  </div>
 </main>
+
 <script type="module">
-let pdfjsLib;try{pdfjsLib=await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs");pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs"}catch(e){console.error(e)}
-const $=s=>document.querySelector(s);let allEvents=[];const pad=n=>String(n).padStart(2,"0");const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;const clock=t=>{const[h,m]=t.split(":").map(Number),d=new Date();d.setHours(h,m,0,0);return d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})};const prettyDate=s=>new Date(s+"T12:00:00").toLocaleDateString([],{weekday:"long",month:"short",day:"numeric"});
-function firstPerDay(events){const map=new Map();[...events].sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start)).forEach(e=>{if(!map.has(e.date))map.set(e.date,e)});return[...map.values()]}
-function mockData(){const base=new Date();base.setHours(12,0,0,0);const d=n=>{const x=new Date(base);x.setDate(x.getDate()+n);return ymd(x)};return[{title:"Calculus I",date:d(1),start:"08:30",end:"10:00"},{title:"Programming Fundamentals",date:d(1),start:"11:00",end:"12:30"},{title:"Physics",date:d(2),start:"10:15",end:"11:45"},{title:"Linear Algebra",date:d(2),start:"13:00",end:"14:30"},{title:"Computer Systems",date:d(3),start:"07:45",end:"09:15"},{title:"Discrete Math",date:d(3),start:"12:00",end:"13:30"},{title:"Programming Lab",date:d(4),start:"09:40",end:"11:10"},{title:"Calculus Tutorial",date:d(4),start:"15:00",end:"16:00"}].map((e,i)=>({...e,id:"mock-"+i}))}
-function render(){const first=firstPerDay(allEvents);$("#schedule").innerHTML=first.map(e=>`<article class="card day"><div class="date"><strong>${prettyDate(e.date)}</strong><span>${e.date}</span></div><div class="lecture"><div><div class="time">${clock(e.start)}</div><strong>${e.title}</strong><small>${e.end?`until ${clock(e.end)}`:""}</small></div><div class="pill">ALARMED</div></div></article>`).join("");$("#ics").disabled=!first.length}
-$("#mock").onclick=()=>{allEvents=mockData();render();$("#status").textContent=`Mock test passed: ${allEvents.length} total classes → ${firstPerDay(allEvents).length} alarms. Later lectures are ignored.`};
-function parseTime(s){const m=s.trim().toLowerCase().replace(/\./g,"").match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/);if(!m)return null;let h=+m[1],min=+(m[2]||0);if(m[3]==="pm"&&h<12)h+=12;if(m[3]==="am"&&h===12)h=0;if(h>23||min>59)return null;return`${pad(h)}:${pad(min)}`}
-function parseDate(line){let m=line.match(/\b(20\d{2})[-/](\d{1,2})[-/](\d{1,2})\b/);if(m)return`${m[1]}-${pad(+m[2])}-${pad(+m[3])}`;m=line.match(/\b(\d{1,2})[\/.\-](\d{1,2})[\/.\-](20\d{2})\b/);if(m)return`${m[3]}-${pad(+m[1])}-${pad(+m[2])}`;return null}
-function parseText(text){const lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);let currentDate=null,out=[];for(const line of lines){currentDate=parseDate(line)||currentDate;const r=line.match(/\b(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\s*[-–]\s*(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\b/i),one=line.match(/\b(\d{1,2}(?::\d{2})?\s*(?:am|pm))\b/i),start=r?parseTime(r[1]):one?parseTime(one[1]):null;if(!currentDate||!start)continue;const end=r?parseTime(r[2]):null;let title=line.replace(/\b20\d{2}[-/]\d{1,2}[-/]\d{1,2}\b/g,"").replace(/\b\d{1,2}[\/.\-]\d{1,2}[\/.\-]20\d{2}\b/g,"").replace(/\b\d{1,2}(?::\d{2})?\s*(?:am|pm)?\s*[-–]\s*\d{1,2}(?::\d{2})?\s*(?:am|pm)?\b/ig,"").replace(/\b\d{1,2}(?::\d{2})?\s*(?:am|pm)\b/ig,"").replace(/\s+/g," ").trim()||"Class";out.push({id:crypto.randomUUID(),title,date:currentDate,start,end})}return out}
-$("#pdf").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;$("#status").textContent="Reading PDF…";try{const buf=await file.arrayBuffer(),pdf=await pdfjsLib.getDocument({data:buf}).promise;let text="";for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p),c=await page.getTextContent();text+=c.items.map(x=>x.str).join(" ")+"\n"}allEvents=parseText(text);render();const n=firstPerDay(allEvents).length;$("#status").textContent=n?`Found ${allEvents.length} classes and selected ${n} first lectures for alarms.`:"Could not confidently detect dated class times in this PDF."}catch(err){console.error(err);$("#status").textContent="Could not read this PDF. Image-only/scanned PDFs need OCR support."}};
-$("#notify").onclick=async()=>{if(!("Notification"in window))return alert("Notifications are not supported by this browser.");const p=await Notification.requestPermission();$("#status").textContent=p==="granted"?"Browser alerts enabled.":"Notification permission was not granted."};
-function makeICS(){const lead=+$("#lead").value,ev=firstPerDay(allEvents),lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ClassAlarm//EN"];for(const e of ev){const compact=(date,time)=>date.replaceAll("-","")+"T"+time.replace(":","")+"00";lines.push("BEGIN:VEVENT",`UID:${e.id}@classalarm`,`DTSTART:${compact(e.date,e.start)}`,`DTEND:${compact(e.date,e.end||e.start)}`,`SUMMARY:${e.title.replace(/,/g,"\\,")}`,"BEGIN:VALARM",`TRIGGER:-PT${lead}M`,"ACTION:DISPLAY",`DESCRIPTION:Wake up - ${e.title.replace(/,/g,"\\,")}`,"END:VALARM","END:VEVENT")}lines.push("END:VCALENDAR");const blob=new Blob([lines.join("\r\n")],{type:"text/calendar"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="first-class-alarms.ics";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}$("#ics").onclick=makeICS;
+let pdfjsLib;
+try {
+  pdfjsLib = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
+} catch(e) { console.error(e); }
+
+const $ = s => document.querySelector(s);
+let allEvents = [];
+
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const clock=t=>{
+  const [h,m]=t.split(":").map(Number); const d=new Date(); d.setHours(h,m,0,0);
+  return d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+};
+const prettyDate=s=>new Date(s+"T12:00:00").toLocaleDateString([], {weekday:"long",month:"short",day:"numeric"});
+
+function firstPerDay(events){
+  const map=new Map();
+  [...events].sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start))
+    .forEach(e=>{ if(!map.has(e.date)) map.set(e.date,e); });
+  return [...map.values()];
+}
+
+function datesForWeekday(startDate, endDate, weekday, time, title){
+  const start=new Date(startDate+"T12:00:00"), end=new Date(endDate+"T12:00:00");
+  const out=[];
+  const d=new Date(start);
+  while(d.getDay()!==weekday) d.setDate(d.getDate()+1);
+  while(d<=end){
+    out.push({id:crypto.randomUUID(),title,date:ymd(d),start:time});
+    d.setDate(d.getDate()+7);
+  }
+  return out;
+}
+
+function uploadedScheduleFixture(){
+  return [
+    ...datesForWeekday("2026-09-14","2026-12-28",1,"11:00","Histology"),
+    ...datesForWeekday("2026-09-14","2026-11-26",3,"11:00","Physiology"),
+    ...datesForWeekday("2026-09-14","2026-12-26",5,"09:00","Microbiology"),
+    ...datesForWeekday("2026-09-14","2026-11-26",5,"15:00","Anatomy"),
+    ...datesForWeekday("2026-09-14","2026-12-26",5,"13:00","Biochemistry"),
+    ...datesForWeekday("2026-09-14","2026-12-26",5,"15:00","Medical Genetics"),
+    ...datesForWeekday("2026-10-26","2026-12-05",6,"15:00","Immunology")
+  ];
+}
+
+function mockData(){
+  const base=new Date(); base.setHours(12,0,0,0);
+  const d=n=>{const x=new Date(base);x.setDate(x.getDate()+n);return ymd(x)};
+  return [
+    {title:"Calculus I",date:d(1),start:"08:30",end:"10:00"},
+    {title:"Programming Fundamentals",date:d(1),start:"11:00",end:"12:30"},
+    {title:"Physics",date:d(2),start:"10:15",end:"11:45"},
+    {title:"Linear Algebra",date:d(2),start:"13:00",end:"14:30"},
+    {title:"Computer Systems",date:d(3),start:"07:45",end:"09:15"},
+    {title:"Discrete Math",date:d(3),start:"12:00",end:"13:30"},
+    {title:"Programming Lab",date:d(4),start:"09:40",end:"11:10"},
+    {title:"Calculus Tutorial",date:d(4),start:"15:00",end:"16:00"}
+  ].map((e,i)=>({...e,id:"mock-"+i}));
+}
+
+function render(){
+  const first=firstPerDay(allEvents);
+  $("#schedule").innerHTML=first.map(e=>`
+    <article class="card day">
+      <div class="date"><strong>${prettyDate(e.date)}</strong><span>${e.date}</span></div>
+      <div class="lecture">
+        <div><div class="time">${clock(e.start)}</div><strong>${e.title}</strong><small>${e.end?`until ${clock(e.end)}`:""}</small></div>
+        <div class="pill">ALARMED</div>
+      </div>
+    </article>`).join("");
+  $("#ics").disabled=!first.length;
+}
+
+$("#realmock").onclick=()=>{
+  allEvents=uploadedScheduleFixture(); render();
+  const first=firstPerDay(allEvents);
+  $("#status").textContent=`Uploaded schedule fixture loaded: ${allEvents.length} generated lecture occurrences → ${first.length} first-of-day alarms.`;
+};
+
+$("#mock").onclick=()=>{
+  allEvents=mockData(); render();
+  $("#status").textContent=`Mock test passed: ${allEvents.length} total classes → ${firstPerDay(allEvents).length} alarms. Later lectures are ignored.`;
+};
+
+function parseTime(s){
+  const m=s.trim().toLowerCase().replace(/\./g,"").match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/);
+  if(!m)return null; let h=+m[1], min=+(m[2]||0);
+  if(m[3]==="pm"&&h<12)h+=12;if(m[3]==="am"&&h===12)h=0;
+  if(h>23||min>59)return null;return `${pad(h)}:${pad(min)}`;
+}
+function parseDate(line){
+  let m=line.match(/\b(20\d{2})[-/](\d{1,2})[-/](\d{1,2})\b/);
+  if(m)return `${m[1]}-${pad(+m[2])}-${pad(+m[3])}`;
+  m=line.match(/\b(\d{1,2})[\/.\-](\d{1,2})[\/.\-](20\d{2})\b/);
+  if(m)return `${m[3]}-${pad(+m[1])}-${pad(+m[2])}`;
+  return null;
+}
+function parseText(text){
+  const lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);let currentDate=null,out=[];
+  for(const line of lines){
+    currentDate=parseDate(line)||currentDate;
+    const r=line.match(/\b(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\s*[-–]\s*(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\b/i);
+    const one=line.match(/\b(\d{1,2}(?::\d{2})?\s*(?:am|pm))\b/i);
+    const start=r?parseTime(r[1]):one?parseTime(one[1]):null;
+    if(!currentDate||!start)continue;
+    const end=r?parseTime(r[2]):null;
+    let title=line.replace(/\b20\d{2}[-/]\d{1,2}[-/]\d{1,2}\b/g,"")
+      .replace(/\b\d{1,2}[\/.\-]\d{1,2}[\/.\-]20\d{2}\b/g,"")
+      .replace(/\b\d{1,2}(?::\d{2})?\s*(?:am|pm)?\s*[-–]\s*\d{1,2}(?::\d{2})?\s*(?:am|pm)?\b/ig,"")
+      .replace(/\b\d{1,2}(?::\d{2})?\s*(?:am|pm)\b/ig,"").replace(/\s+/g," ").trim()||"Class";
+    out.push({id:crypto.randomUUID(),title,date:currentDate,start,end});
+  }
+  return out;
+}
+
+$("#pdf").onchange=async e=>{
+  const file=e.target.files?.[0]; if(!file)return;
+  $("#status").textContent="Reading PDF…";
+  try{
+    const buf=await file.arrayBuffer(), pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    let text="";
+    for(let p=1;p<=pdf.numPages;p++){
+      const page=await pdf.getPage(p), c=await page.getTextContent();
+      text+=c.items.map(x=>x.str).join(" ")+"\n";
+    }
+    allEvents=parseText(text);render();
+    const n=firstPerDay(allEvents).length;
+    $("#status").textContent=n?`Found ${allEvents.length} classes and selected ${n} first lectures for alarms.`:"Could not confidently detect dated class times in this PDF.";
+  }catch(err){console.error(err);$("#status").textContent="This is a scanned/image PDF. The production version needs OCR to read this schedule automatically; the uploaded-schedule test button uses a fixture transcribed from your PDF.";}
+};
+
+$("#notify").onclick=async()=>{
+  if(!("Notification" in window))return alert("Notifications are not supported by this browser.");
+  const p=await Notification.requestPermission();
+  $("#status").textContent=p==="granted"?"Browser alerts enabled.":"Notification permission was not granted.";
+};
+
+function makeICS(){
+  const lead=+$("#lead").value, ev=firstPerDay(allEvents), lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ClassAlarm//EN"];
+  for(const e of ev){
+    const compact=(date,time)=>date.replaceAll("-","")+"T"+time.replace(":","")+"00";
+    lines.push("BEGIN:VEVENT",`UID:${e.id}@classalarm`,`DTSTART:${compact(e.date,e.start)}`,
+      `DTEND:${compact(e.date,e.end||e.start)}`,`SUMMARY:${e.title.replace(/,/g,"\\,")}`,
+      "BEGIN:VALARM",`TRIGGER:-PT${lead}M`,"ACTION:DISPLAY",`DESCRIPTION:Wake up - ${e.title.replace(/,/g,"\\,")}`,"END:VALARM","END:VEVENT");
+  }
+  lines.push("END:VCALENDAR");
+  const blob=new Blob([lines.join("\r\n")],{type:"text/calendar"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="first-class-alarms.ics";a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+$("#ics").onclick=makeICS;
 </script>
 </body>
 </html>
