@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>ClassAlarm</title>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs" type="module"></script>
+  <style>
+    :root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#edf2ff;background:#07101f}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% -10%,#183366 0,transparent 34%),#07101f}
+    main{max-width:1050px;margin:auto;padding:22px 18px 60px}.top{display:flex;justify-content:space-between;align-items:center;padding:8px 0 24px;border-bottom:1px solid #1c2b46}
+    .brand{font-weight:850;letter-spacing:-.02em}.muted{color:#8997ad}.hero{padding:56px 0 30px}.eyebrow{font-size:12px;letter-spacing:.14em;color:#7ba4ff;font-weight:800}
+    h1{font-size:clamp(42px,7vw,76px);line-height:.96;letter-spacing:-.055em;margin:14px 0 22px;max-width:850px}.hero p{max-width:700px;color:#9aa8bd;font-size:18px;line-height:1.6}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{border:1px solid #20314f;background:#0d1729;border-radius:18px;padding:18px}
+    .upload{display:flex;flex-direction:column;gap:10px;justify-content:center;min-height:165px;border-style:dashed}.upload input{max-width:100%}
+    button,select,input{font:inherit}button{border:0;border-radius:10px;padding:11px 14px;font-weight:750;cursor:pointer}.primary{background:#78a0ff;color:#071329}.secondary{background:#172642;color:#e9f0ff;border:1px solid #30476e}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.settings{margin-top:14px;display:flex;justify-content:space-between;gap:18px;align-items:end}
+    label.small{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#8795aa;font-weight:800;margin-bottom:7px}select{background:#0a1425;color:#edf2ff;border:1px solid #2b3d5d;border-radius:9px;padding:10px}
+    #status{margin:16px 2px;color:#92a2b9}.day{display:grid;grid-template-columns:180px 1fr;margin-top:12px;padding:0;overflow:hidden}.date{padding:20px;border-right:1px solid #20314f}.date strong{display:block}.date span{font-size:12px;color:#708099}
+    .lecture{padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:15px}.time{font-size:22px;font-weight:850;color:#9ab7ff}.lecture small{display:block;color:#75849c;margin-top:3px}
+    .pill{font-size:11px;border:1px solid #315687;color:#9fc0ff;border-radius:999px;padding:5px 8px;font-weight:800}.note{margin-top:20px;color:#93a1b6;font-size:13px;line-height:1.55}
+    @media(max-width:720px){.grid{grid-template-columns:1fr}.settings{align-items:stretch;flex-direction:column}.day{grid-template-columns:1fr}.date{border-right:0;border-bottom:1px solid #20314f}.lecture{align-items:flex-start}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="top"><div class="brand">⏰ ClassAlarm</div><div class="muted">first lecture only</div></div>
+  <section class="hero">
+    <div class="eyebrow">WAKE-UP SCHEDULER</div>
+    <h1>Only wake up for your first class.</h1>
+    <p>Upload the latest school schedule. The app finds the earliest lecture on each date and ignores every later class that day.</p>
+  </section>
+  <div class="grid">
+    <div class="card upload">
+      <strong>Upload schedule PDF</strong><span class="muted">Use the newest schedule whenever the school changes the week.</span><input id="pdf" type="file" accept="application/pdf" />
+    </div>
+    <div class="card upload">
+      <strong>Test with mock data</strong><span class="muted">The mock schedule intentionally has several classes per day.</span><button id="mock" class="secondary">Load mock schedule</button>
+    </div>
+  </div>
+  <section class="card settings">
+    <div><label class="small" for="lead">Wake-up time</label><select id="lead"><option value="15">15 min before first class</option><option value="30">30 min before first class</option><option value="45">45 min before first class</option><option value="60" selected>1 hour before first class</option><option value="90">1.5 hours before first class</option><option value="120">2 hours before first class</option></select></div>
+    <div class="row"><button id="notify" class="secondary">Enable browser alert</button><button id="ics" class="primary" disabled>Create first-class alarms</button></div>
+  </section>
+  <div id="status">Load the mock schedule or upload a PDF.</div><section id="schedule"></section>
+  <div class="card note"><strong>Wake-up alarm limitation:</strong> a website cannot reliably ring like the native Clock app after the browser is closed, especially on iPhone. The calendar export creates alarms for only the first lecture of each day. A production native app can use Android/iOS alarm APIs for a true wake-up alarm.</div>
+</main>
+<script type="module">
+let pdfjsLib;try{pdfjsLib=await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs");pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs"}catch(e){console.error(e)}
+const $=s=>document.querySelector(s);let allEvents=[];const pad=n=>String(n).padStart(2,"0");const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;const clock=t=>{const[h,m]=t.split(":").map(Number),d=new Date();d.setHours(h,m,0,0);return d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})};const prettyDate=s=>new Date(s+"T12:00:00").toLocaleDateString([],{weekday:"long",month:"short",day:"numeric"});
+function firstPerDay(events){const map=new Map();[...events].sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start)).forEach(e=>{if(!map.has(e.date))map.set(e.date,e)});return[...map.values()]}
+function mockData(){const base=new Date();base.setHours(12,0,0,0);const d=n=>{const x=new Date(base);x.setDate(x.getDate()+n);return ymd(x)};return[{title:"Calculus I",date:d(1),start:"08:30",end:"10:00"},{title:"Programming Fundamentals",date:d(1),start:"11:00",end:"12:30"},{title:"Physics",date:d(2),start:"10:15",end:"11:45"},{title:"Linear Algebra",date:d(2),start:"13:00",end:"14:30"},{title:"Computer Systems",date:d(3),start:"07:45",end:"09:15"},{title:"Discrete Math",date:d(3),start:"12:00",end:"13:30"},{title:"Programming Lab",date:d(4),start:"09:40",end:"11:10"},{title:"Calculus Tutorial",date:d(4),start:"15:00",end:"16:00"}].map((e,i)=>({...e,id:"mock-"+i}))}
+function render(){const first=firstPerDay(allEvents);$("#schedule").innerHTML=first.map(e=>`<article class="card day"><div class="date"><strong>${prettyDate(e.date)}</strong><span>${e.date}</span></div><div class="lecture"><div><div class="time">${clock(e.start)}</div><strong>${e.title}</strong><small>${e.end?`until ${clock(e.end)}`:""}</small></div><div class="pill">ALARMED</div></div></article>`).join("");$("#ics").disabled=!first.length}
+$("#mock").onclick=()=>{allEvents=mockData();render();$("#status").textContent=`Mock test passed: ${allEvents.length} total classes → ${firstPerDay(allEvents).length} alarms. Later lectures are ignored.`};
+function parseTime(s){const m=s.trim().toLowerCase().replace(/\./g,"").match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/);if(!m)return null;let h=+m[1],min=+(m[2]||0);if(m[3]==="pm"&&h<12)h+=12;if(m[3]==="am"&&h===12)h=0;if(h>23||min>59)return null;return`${pad(h)}:${pad(min)}`}
+function parseDate(line){let m=line.match(/\b(20\d{2})[-/](\d{1,2})[-/](\d{1,2})\b/);if(m)return`${m[1]}-${pad(+m[2])}-${pad(+m[3])}`;m=line.match(/\b(\d{1,2})[\/.\-](\d{1,2})[\/.\-](20\d{2})\b/);if(m)return`${m[3]}-${pad(+m[1])}-${pad(+m[2])}`;return null}
+function parseText(text){const lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);let currentDate=null,out=[];for(const line of lines){currentDate=parseDate(line)||currentDate;const r=line.match(/\b(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\s*[-–]\s*(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\b/i),one=line.match(/\b(\d{1,2}(?::\d{2})?\s*(?:am|pm))\b/i),start=r?parseTime(r[1]):one?parseTime(one[1]):null;if(!currentDate||!start)continue;const end=r?parseTime(r[2]):null;let title=line.replace(/\b20\d{2}[-/]\d{1,2}[-/]\d{1,2}\b/g,"").replace(/\b\d{1,2}[\/.\-]\d{1,2}[\/.\-]20\d{2}\b/g,"").replace(/\b\d{1,2}(?::\d{2})?\s*(?:am|pm)?\s*[-–]\s*\d{1,2}(?::\d{2})?\s*(?:am|pm)?\b/ig,"").replace(/\b\d{1,2}(?::\d{2})?\s*(?:am|pm)\b/ig,"").replace(/\s+/g," ").trim()||"Class";out.push({id:crypto.randomUUID(),title,date:currentDate,start,end})}return out}
+$("#pdf").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;$("#status").textContent="Reading PDF…";try{const buf=await file.arrayBuffer(),pdf=await pdfjsLib.getDocument({data:buf}).promise;let text="";for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p),c=await page.getTextContent();text+=c.items.map(x=>x.str).join(" ")+"\n"}allEvents=parseText(text);render();const n=firstPerDay(allEvents).length;$("#status").textContent=n?`Found ${allEvents.length} classes and selected ${n} first lectures for alarms.`:"Could not confidently detect dated class times in this PDF."}catch(err){console.error(err);$("#status").textContent="Could not read this PDF. Image-only/scanned PDFs need OCR support."}};
+$("#notify").onclick=async()=>{if(!("Notification"in window))return alert("Notifications are not supported by this browser.");const p=await Notification.requestPermission();$("#status").textContent=p==="granted"?"Browser alerts enabled.":"Notification permission was not granted."};
+function makeICS(){const lead=+$("#lead").value,ev=firstPerDay(allEvents),lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ClassAlarm//EN"];for(const e of ev){const compact=(date,time)=>date.replaceAll("-","")+"T"+time.replace(":","")+"00";lines.push("BEGIN:VEVENT",`UID:${e.id}@classalarm`,`DTSTART:${compact(e.date,e.start)}`,`DTEND:${compact(e.date,e.end||e.start)}`,`SUMMARY:${e.title.replace(/,/g,"\\,")}`,"BEGIN:VALARM",`TRIGGER:-PT${lead}M`,"ACTION:DISPLAY",`DESCRIPTION:Wake up - ${e.title.replace(/,/g,"\\,")}`,"END:VALARM","END:VEVENT")}lines.push("END:VCALENDAR");const blob=new Blob([lines.join("\r\n")],{type:"text/calendar"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="first-class-alarms.ics";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}$("#ics").onclick=makeICS;
+</script>
+</body>
+</html>
